@@ -1,0 +1,17 @@
+{
+  "name": "brocoders",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "eslint": "^5.15.3",
+    "eslint-plugin-node": "^8.0.1",
+    "sqlite3": "^4.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vera pavlova",
+  "license": "ISC"
+}

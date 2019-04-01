@@ -1,17 +1,18 @@
-const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database('./olympic_history.db')
-const inseartTeamsnocName = () => new Promise((resolve, reject) => {
-  db.all(`SELECT noc_name FROM teams;`, (_err, row) => resolve(row))
-})
-const inseartGamesYear = () => new Promise((resolve, reject) => {
-  db.all(`SELECT year FROM games;`, (_err, row) => resolve(row))
-})
-const inseartResultsYearCountOfMedals = (season, medal, nocName) => new Promise((resolve, reject) => {
-  let condition = 'results.medal != 0 AND games.season = ? AND lower(teams.noc_name) = ?'
-  let params = [season, nocName.toLowerCase()]
+const sqlite3 = require('sqlite3').verbose();
+
+const db = new sqlite3.Database('./olympic_history.db');
+const inseartTeamsnocName = () => new Promise((resolve) => {
+  db.all('SELECT noc_name FROM teams;', (_err, row) => resolve(row));
+});
+const inseartGamesYear = () => new Promise((resolve) => {
+  db.all('SELECT year FROM games;', (_err, row) => resolve(row));
+});
+const inseartResultsYearCountOfMedals = (season, medal, nocName) => new Promise((resolve) => {
+  let condition = 'results.medal != 0 AND games.season = ? AND lower(teams.noc_name) = ?';
+  const params = [season, nocName.toLowerCase()];
   if (medal) {
-    condition = condition + ` AND results.medal = ?`
-    params.push(medal)
+    condition += ' AND results.medal = ?';
+    params.push(medal);
   }
   db.all(`
     SELECT games.year AS column, COUNT(results.medal) AS countMedals
@@ -22,18 +23,18 @@ const inseartResultsYearCountOfMedals = (season, medal, nocName) => new Promise(
     WHERE ${condition}
     GROUP BY year
     ORDER BY column;
-    `, params, (_err, row) => resolve(row))
-})
-const inseartResultsTeamsCountOfMedals = (season, year, medal) => new Promise((resolve, reject) => {
-  let condition = 'results.medal != 0 AND games.season = ?'
-  let params = [season]
+    `, params, (_err, row) => resolve(row));
+});
+const inseartResultsTeamsCountOfMedals = (season, year, medal) => new Promise((resolve) => {
+  let condition = 'results.medal != 0 AND games.season = ?';
+  const params = [season];
   if (medal) {
-    condition = condition + ` AND results.medal = ?`
-    params.push(medal)
+    condition += ' AND results.medal = ?';
+    params.push(medal);
   }
   if (year) {
-    condition = condition + ` AND games.year = ?`
-    params.push(year)
+    condition += ' AND games.year = ?';
+    params.push(year);
   }
   db.get(`
     SELECT AVG(countMedals) as avg
@@ -48,9 +49,9 @@ const inseartResultsTeamsCountOfMedals = (season, year, medal) => new Promise((r
         ORDER BY countMedals DESC
     )
   `, params, (_err, { avg }) => {
-    let having = ''
+    let having = '';
     if (avg > 200) {
-      having = `HAVING COUNT(results.medal) > 200`
+      having = 'HAVING COUNT(results.medal) > 200';
     }
 
     db.all(`
@@ -63,7 +64,9 @@ const inseartResultsTeamsCountOfMedals = (season, year, medal) => new Promise((r
     GROUP BY teams.noc_name
     ORDER BY countMedals DESC
     ${having};
-    `, params, (_err, row) => resolve(row))
-  })
-})
-module.exports = { inseartTeamsnocName, inseartResultsYearCountOfMedals, inseartGamesYear, inseartResultsTeamsCountOfMedals }
+    `, params, (_err, row) => resolve(row));
+  });
+});
+module.exports = {
+  inseartTeamsnocName, inseartResultsYearCountOfMedals, inseartGamesYear, inseartResultsTeamsCountOfMedals,
+};

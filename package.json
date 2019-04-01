@@ -3,21 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "main": "stat.js",
-  "dependencies": {
-    "eslint": "^5.15.3",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
+  "dependencies": {    
     "sqlite3": "^4.0.6"
   },
   "engines": {
     "node": ">=10.0.0"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "scripts": { 
+    "init": "node ./init.js",
+    "stat": "node ./stat.js medals summer ukr",
+    "stat1": "node ./stat.js medals silver UKR winter",
+    "stat2": "node ./stat.js medals gold RUS summer",
+    "stat3": "node ./stat.js medals winter RUS",
+    "stat4": "node ./stat.js top-teams summer 2004 silver",
+    "stat5": "node ./stat.js top-teams silver winter",
+    "stat6": "node ./stat.js top-teams winter",
+    "stat7": "node ./stat.js top-teams summer"
   },
   "author": "vera pavlova",
   "license": "ISC"

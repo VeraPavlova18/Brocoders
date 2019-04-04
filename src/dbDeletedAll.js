@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('./olympic_history.db');
+
 function GetdbDeleted() {
   db.run('DELETE FROM athletes;');
   db.run('DELETE FROM events;');

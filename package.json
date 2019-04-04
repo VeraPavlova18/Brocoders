@@ -18,10 +18,10 @@
   "scripts": { 
     "init": "node ./init.js",
     "stat": "node ./stat.js medals summer ukr",
-    "stat1": "node ./stat.js medals silver UKR winter",
+    "stat1": "node ./stat.js medals gold USA winter",
     "stat2": "node ./stat.js medals gold RUS summer",
-    "stat3": "node ./stat.js medals winter RUS",
-    "stat4": "node ./stat.js top-teams summer 2004 silver",
+    "stat3": "node ./stat.js medals winter CHN",
+    "stat4": "node ./stat.js top-teams summer 2004 gold",
     "stat5": "node ./stat.js top-teams silver winter",
     "stat6": "node ./stat.js top-teams winter",
     "stat7": "node ./stat.js top-teams summer"

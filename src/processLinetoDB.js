@@ -1,24 +1,37 @@
+/* eslint-disable no-console */
 const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('./olympic_history.db');
 const { parse } = require('./parseLiner');
 
-function ProcessLineToDB() {
-  let titles = [];
-  let i = 0;
+const medalType = {
+  null: 0,
+  gold: 1,
+  silver: 2,
+  bronze: 3,
+};
 
-  this.processLine = async function (line) {
-    if (i === 0) {
-      titles = parse(line).map(title => title.toLowerCase());
+class ProcessLineToDB {
+  constructor() {
+    this.titles = [];
+    this.i = 0;
+  }
+
+  async processLine(line) {
+    if (this.i === 0) {
+      this.titles = parse(line).map(title => title.toLowerCase());
     } else {
+      // --> created obj
       const obj = {};
       const row = parse(line);
-      for (let j = 0; j < titles.length; j += 1) {
-        obj[titles[j]] = row[j];
-      }
+      // eslint-disable-next-line no-return-assign
+      row.reduce((prevValue, currValue, index) => obj[this.titles[index]] = currValue, 0);
+      // <--created obj
+
       if (+obj.year === 1906 && obj.season.toLowerCase() === 'summer') {
         return;
       }
+
       const season = obj.season.toLowerCase() === 'summer' ? 0 : 1;
       const teamsName = (obj.team.indexOf('-') !== -1) ? obj.team.substr(0, obj.team.indexOf('-')) : obj.team;
       obj.params = {};
@@ -27,9 +40,7 @@ function ProcessLineToDB() {
       const fullName = obj.name.trim().replace(/""/g, '"').replace(/["(].+?[")]\s*/g, '');
       const sex = obj.sex ? obj.sex : null;
       const yearOfBirth = (obj.year && obj.age) ? `${obj.year} - ${obj.age}` : null;
-      const medalType = { gold: 1, silver: 2, bronze: 3 };
-      let medal = obj.medal ? obj.medal.toLowerCase() : 0;
-      medal = (medalType[medal]) ? medalType[medal] : medal;
+      const medal = medalType[`${obj.medal}`.toLowerCase()];
 
       const events = new Promise((resolve, reject) => {
         db.run('INSERT OR IGNORE INTO events (name) VALUES (?);', [obj.event], (err) => {
@@ -93,12 +104,11 @@ function ProcessLineToDB() {
           });
         });
     }
-    i += 1;
-    if (i % 100 === 0) {
-      // eslint-disable-next-line no-console
-      console.log(`-> ${i}`);
+    this.i += 1;
+    if (this.i % 1000 === 0) {
+      console.log(`-> ${this.i}`);
     }
-  };
+  }
 }
 
 module.exports = { ProcessLineToDB };

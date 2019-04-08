@@ -1,13 +1,16 @@
+/* eslint-disable no-restricted-syntax */
 const fs = require('fs');
 const { ProcessLineToDB } = require('./processLinetoDB');
 
-function streamOn() {
+const toOlympicHistory = new ProcessLineToDB();
+
+async function streamOn() {
   const stream = fs.createReadStream('./athlete_events.csv', {
     highWaterMark: 16,
   });
-  const toOlympicHistory = new ProcessLineToDB();
   let buffer = '';
-  stream.on('data', (chunk) => {
+
+  for await (const chunk of stream) {
     stream.pause();
     buffer += chunk;
     if (buffer.indexOf('\n') !== -1 && buffer !== undefined) {
@@ -17,7 +20,7 @@ function streamOn() {
     } else {
       stream.resume();
     }
-  });
+  }
 }
 
 module.exports = { streamOn };

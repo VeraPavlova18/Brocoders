@@ -106,7 +106,7 @@ class ProcessLineToDB {
     }
     this.i += 1;
     if (this.i % 1000 === 0) {
-      console.log(`-> ${this.i}`);
+      console.log(`-> ${this.i}  ${new Date()}`);
     }
   }
 }

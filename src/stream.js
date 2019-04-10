@@ -1,11 +1,13 @@
 /* eslint-disable no-restricted-syntax */
 const fs = require('fs');
 const { ProcessLineToDB } = require('./processLinetoDB');
+const { getTitles } = require('./getTitles');
 
 const toOlympicHistory = new ProcessLineToDB();
 
 async function streamOn() {
-  const stream = fs.createReadStream('./athlete_events.csv');
+  const start = Buffer.byteLength(await getTitles(), 'utf8') + 1;
+  const stream = fs.createReadStream('./athlete_events.csv', { start });
   let buffer = '';
 
   for await (const chunk of stream) {

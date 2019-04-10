@@ -6,7 +6,7 @@ const { getTitles } = require('./getTitles');
 const toOlympicHistory = new ProcessLineToDB();
 
 async function streamOn() {
-  const start = Buffer.byteLength(await getTitles(), 'utf8') + 1;
+  const { size: start } = await getTitles();
   const stream = fs.createReadStream('./athlete_events.csv',
     { start, highWaterMark: 16 });
   let buffer = '';
@@ -16,7 +16,7 @@ async function streamOn() {
     if (buffer.indexOf('\n') !== -1 && buffer !== undefined) {
       const arr = buffer.split('\n');
       buffer = arr.pop();
-      Promise.all(arr.map(row => toOlympicHistory.processLine(row)));
+      await Promise.all(arr.map(row => toOlympicHistory.processLine(row)));
     }
   }
 }

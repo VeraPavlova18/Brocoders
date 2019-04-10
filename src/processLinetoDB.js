@@ -14,17 +14,16 @@ const medalType = {
 
 class ProcessLineToDB {
   constructor() {
-    this.titles = [];
     this.i = 0;
   }
 
   async processLine(line) {
-    this.titles = parse(await getTitles()).map(title => title.toLowerCase());
+    const { arr } = await getTitles();
     // --> created obj
     const obj = {};
     const row = parse(line);
     // eslint-disable-next-line no-return-assign
-    row.reduce((prevValue, currValue, index) => obj[this.titles[index]] = currValue, 0);
+    row.reduce((prevValue, currValue, index) => obj[arr[index]] = currValue, 0);
     // <--created obj
 
     if (+obj.year === 1906 && obj.season.toLowerCase() === 'summer') {

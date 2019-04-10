@@ -7,10 +7,8 @@ const toOlympicHistory = new ProcessLineToDB();
 
 async function streamOn() {
   const start = Buffer.byteLength(await getTitles(), 'utf8') + 1;
-  const stream = fs.createReadStream('./athlete_events.csv', {
-    highWaterMark: 16,
-  },
-  { start });
+  const stream = fs.createReadStream('./athlete_events.csv',
+    { start, highWaterMark: 16 });
   let buffer = '';
 
   for await (const chunk of stream) {

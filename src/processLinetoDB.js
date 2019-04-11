@@ -19,6 +19,7 @@ class ProcessLineToDB {
 
   async processLine(line) {
     const { arr } = await getTitles();
+
     // --> created obj
     const obj = {};
     const row = parse(line);
@@ -31,42 +32,51 @@ class ProcessLineToDB {
     }
 
     const season = obj.season.toLowerCase() === 'summer' ? 0 : 1;
+
     const teamsName = (obj.team.indexOf('-') !== -1) ? obj.team.substr(0, obj.team.indexOf('-')) : obj.team;
+
     obj.params = {};
     if (obj.height) obj.params.height = obj.height;
     if (obj.weight) obj.params.weight = obj.weight;
+
     const fullName = obj.name.trim().replace(/""/g, '"').replace(/["(].+?[")]\s*/g, '');
+
     const sex = obj.sex ? obj.sex : null;
+
     const yearOfBirth = (obj.year && obj.age) ? `${obj.year} - ${obj.age}` : null;
+
     const medal = medalType[`${obj.medal}`.toLowerCase()];
 
     const events = new Promise((resolve, reject) => {
-      db.run('INSERT OR IGNORE INTO events (name) VALUES (?);', [obj.event], (err) => {
+      db.run(`INSERT OR IGNORE INTO events (name) VALUES ("${obj.event}");`, (err) => {
         if (err) reject(err);
         resolve();
       });
     });
+
     const sports = new Promise((resolve, reject) => {
-      db.run('INSERT OR IGNORE INTO sports (name) VALUES (?);', [obj.sport], (err) => {
+      db.run(`INSERT OR IGNORE INTO sports (name) VALUES ("${obj.sport}");`, (err) => {
         if (err) reject(err);
         resolve();
       });
     });
+
     const games = new Promise((resolve, reject) => {
-      db.get('SELECT id, city FROM games WHERE year = ? AND season = ?;', [obj.year, season], (err, row) => {
+      db.get(`SELECT id, city FROM games WHERE year = ${obj.year} AND season = ${season};`, (err, row) => {
         if (err) reject(err);
         if (row === undefined) {
-          db.run('INSERT OR IGNORE INTO games (year, season, city) VALUES (?, ?, ?);', [obj.year, season, obj.city], (err) => {
+          db.run(`INSERT OR IGNORE INTO games (year, season, city) VALUES (${obj.year}, ${season}, "${obj.city}");`, (err) => {
             if (err) reject(err);
             resolve();
           });
         } else {
           const cityObject = new Set(row.city.split(', '));
           cityObject.add(obj.city);
-          db.run('UPDATE games SET city = ? WHERE id = ?', [Array.from(cityObject).join(', '), row.id], () => resolve());
+          db.run(`UPDATE games SET city = ${"Array.from(cityObject).join(', ')"} WHERE id = ${row.id}`, () => resolve());
         }
       });
     });
+
     const teams = new Promise((resolve, reject) => {
       db.run('INSERT OR IGNORE INTO teams (name, noc_name) VALUES (?, ?);', [teamsName, obj.noc], (err) => {
         if (err) reject(err);

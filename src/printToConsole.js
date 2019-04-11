@@ -25,7 +25,7 @@ const printToConsole = async function () {
     if (season !== false) {
       const arrResultTeamsCountOfMedals = await insResultsTeamsCountOfMedals(season, year, medals);
       medalsBarChart(arrResultTeamsCountOfMedals);
-    } if (noc === false) {
+    } if (season === false) {
       console.log('You have to specify season');
     }
   }
